@@ -1,6 +1,6 @@
 {
   "name": "@pyush/cipherlock",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Secure local secret-management architecture for NestJS apps with Unix Sockets, Windows Named Pipes, and TPM 2.0 / Apple Secure Enclave binding.",
   "author": "CipherLock Team",
   "license": "MIT",
