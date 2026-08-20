@@ -60,6 +60,21 @@ describe('Phase 3: Hardware Security Module (TPM 2.0 / Secure Enclave) Binding',
       expect(retrieved).toBe('hsm-hardware-protected-secret');
     });
 
+    it('HardwareBoundStore should support setMany and deleteMany', async () => {
+      const store = new HardwareBoundStore(tmpDir);
+      await store.setMany({
+        KEY1: 'VAL1',
+        KEY2: 'VAL2',
+      });
+
+      expect(await store.get('KEY1')).toBe('VAL1');
+      expect(await store.get('KEY2')).toBe('VAL2');
+
+      await store.deleteMany(['KEY1', 'KEY2']);
+      expect(await store.get('KEY1')).toBeNull();
+      expect(await store.get('KEY2')).toBeNull();
+    });
+
     it('should fail fast if hardware key blob is tampered with', async () => {
       const store = new HardwareBoundStore(tmpDir);
       await store.set('JWT_SECRET', 'test-secret');

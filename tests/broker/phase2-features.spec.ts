@@ -62,6 +62,31 @@ describe('Phase 2: Windows Transport, DPAPI Store & Cloud Provider', () => {
     });
   });
 
+  describe('Bulk Secret Operations (setMany & deleteMany)', () => {
+    it('WindowsDpapiStore should set and delete multiple secrets at once', async () => {
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'bulk-dpapi-test-'));
+      const store = new WindowsDpapiStore(tmpDir);
+
+      await store.setMany({
+        PORT: '3000',
+        HOST: 'localhost',
+        DB_NAME: 'test_db',
+      });
+
+      expect(await store.get('PORT')).toBe('3000');
+      expect(await store.get('HOST')).toBe('localhost');
+      expect(await store.get('DB_NAME')).toBe('test_db');
+
+      await store.deleteMany(['PORT', 'HOST']);
+
+      expect(await store.get('PORT')).toBeNull();
+      expect(await store.get('HOST')).toBeNull();
+      expect(await store.get('DB_NAME')).toBe('test_db');
+
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    });
+  });
+
   describe('CloudSecretProvider (HashiCorp Vault / AWS / GCP)', () => {
     it('should retrieve secrets from CloudSecretProvider and cache subsequent queries', async () => {
       const provider = new CloudSecretProvider({
