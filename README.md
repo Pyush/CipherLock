@@ -193,14 +193,75 @@ Time:        0.985 s
 
 ## 8. Operator & CLI Guide
 
+The `@pyush/cipherlock` CLI provides administrative commands to manage local credentials and run the broker daemon.
+
+### CLI Commands
+
 ```bash
-# 1. Set secret in OS store
-npm run secrets:set -- DATABASE_PASSWORD "super-secret-demo-value"
+# 1. Set a secret in the encrypted credential store
+npx @pyush/cipherlock secrets:set PORT "3000"
+# Output: [OK] Secret 'PORT' stored securely in OS credential store.
+
+# 2. Retrieve a secret directly via CLI
+npx @pyush/cipherlock secrets:get PORT
+# Output: [OK] PORT = 3000
+
+# 3. Store a complex JSON string payload
+npx @pyush/cipherlock secrets:set DB_CONFIG '{"host":"localhost","port":5432,"user":"admin"}'
+# Output: [OK] Secret 'DB_CONFIG' stored securely in OS credential store.
+
+# 4. Delete a secret from the credential store
+npx @pyush/cipherlock secrets:delete PORT
+# Output: [OK] Secret 'PORT' deleted from OS credential store.
+
+# 5. Start the Secret Broker Daemon
+npx @pyush/cipherlock broker:start
+# Output: [BROKER] Secret Broker listening on /tmp/cipherlock/broker.sock
+```
+
+### Main Application Injection Example (`src/main.ts`)
+
+```typescript
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { SecretsService } from '@pyush/cipherlock';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  // Resolve SecretsService from application context
+  const secretsService = app.get(SecretsService);
+
+  let port = 3000;
+  let host = 'localhost';
+
+  try {
+    const rawPort = await secretsService.get('PORT');
+    if (rawPort) port = parseInt(rawPort, 10);
+  } catch {}
+
+  try {
+    const rawHost = await secretsService.get('HOST');
+    if (rawHost) host = rawHost;
+  } catch {}
+
+  await app.listen(port, host);
+  console.log(`[APP] Application listening on http://${host}:${port}`);
+}
+void bootstrap();
+```
+
+### Live Demo Verification Workflow
+
+```bash
+# 1. Populate required secrets
+npx @pyush/cipherlock secrets:set DATABASE_PASSWORD "super-secret-demo-value"
+npx @pyush/cipherlock secrets:set PORT "3000"
 
 # 2. Start Secret Broker Daemon
-npm run broker:start
+npx @pyush/cipherlock broker:start
 
-# 3. Start NestJS App
+# 3. Start NestJS Application
 npm run start:dev
 
 # 4. Query live demo endpoints
@@ -210,6 +271,7 @@ curl http://localhost:3000/demo/database
 
 curl http://localhost:3000/demo/json-config
 # Response: {"status":"success","parsedMetadata":{"host":"postgres.internal.net","port":5432,"database":"production_db","username":"app_admin","passwordConfigured":true,"ssl":true}}
+
 curl http://localhost:3000/demo/ipc-platform
 curl "http://localhost:3000/demo/cloud-provider?type=vault"
 curl http://localhost:3000/demo/hardware-status

@@ -76,20 +76,20 @@ The package includes the `cipherlock` CLI binary executable for managing credent
 
 ```bash
 # 1. Set a secret in the encrypted credential store
-npx @pyush/cipherlock secrets:set -- DATABASE_PASSWORD "super-secret-password"
-# Output: [SUCCESS] Secret DATABASE_PASSWORD updated in store.
+npx @pyush/cipherlock secrets:set PORT "3000"
+# Output: [OK] Secret 'PORT' stored securely in OS credential store.
 
 # 2. Retrieve a secret via CLI
-npx @pyush/cipherlock secrets:get -- DATABASE_PASSWORD
-# Output: [SUCCESS] DATABASE_PASSWORD = super-secret-password
+npx @pyush/cipherlock secrets:get PORT
+# Output: [OK] PORT = 3000
 
 # 3. Store a complex JSON payload
-npx @pyush/cipherlock secrets:set -- DB_CONFIG '{"host":"localhost","port":5432,"user":"admin"}'
-# Output: [SUCCESS] Secret DB_CONFIG updated in store.
+npx @pyush/cipherlock secrets:set DB_CONFIG '{"host":"localhost","port":5432,"user":"admin"}'
+# Output: [OK] Secret 'DB_CONFIG' stored securely in OS credential store.
 
 # 4. Delete a secret from the credential store
-npx @pyush/cipherlock secrets:delete -- DATABASE_PASSWORD
-# Output: [SUCCESS] Secret DATABASE_PASSWORD deleted from store.
+npx @pyush/cipherlock secrets:delete PORT
+# Output: [OK] Secret 'PORT' deleted from OS credential store.
 
 # 5. Launch the Secret Broker Daemon
 npx @pyush/cipherlock broker:start
