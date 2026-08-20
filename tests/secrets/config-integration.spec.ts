@@ -12,14 +12,16 @@ class MockSecretProvider implements SecretProvider {
     ['DB_CONFIG', '{"host":"localhost","port":5432}'],
   ]);
 
-  async get(name: string): Promise<string> {
-    return this.data.get(name) ?? '';
+  get(name: string): Promise<string> {
+    return Promise.resolve(this.data.get(name) ?? '');
   }
-  async set(key: string, value: string): Promise<void> {
+  set(key: string, value: string): Promise<void> {
     this.data.set(key, value);
+    return Promise.resolve();
   }
-  async delete(key: string): Promise<void> {
+  delete(key: string): Promise<void> {
     this.data.delete(key);
+    return Promise.resolve();
   }
 }
 
@@ -32,7 +34,10 @@ describe('ConfigService Integration Strategies', () => {
 
   describe('Strategy 1: createCipherlockConfig Loader', () => {
     it('should load secrets asynchronously into config object', async () => {
-      const loader = createCipherlockConfig(['PORT', 'HOST', 'DB_CONFIG'], mockProvider);
+      const loader = createCipherlockConfig(
+        ['PORT', 'HOST', 'DB_CONFIG'],
+        mockProvider,
+      );
       const config = await loader();
 
       expect(config.PORT).toBe(4000);
@@ -49,7 +54,10 @@ describe('ConfigService Integration Strategies', () => {
       const port = await configService.get<number>('PORT');
       expect(port).toBe(4000);
 
-      const parsedConfig = await configService.get<{ host: string; port: number }>('DB_CONFIG');
+      const parsedConfig = await configService.get<{
+        host: string;
+        port: number;
+      }>('DB_CONFIG');
       expect(parsedConfig).toEqual({ host: 'localhost', port: 5432 });
 
       const fallback = await configService.get('MISSING_KEY', 'default_val');
@@ -66,7 +74,9 @@ describe('ConfigService Integration Strategies', () => {
         .useValue(mockProvider)
         .compile();
 
-      const configService = moduleRef.get<CipherlockConfigService>(CipherlockConfigService);
+      const configService = moduleRef.get<CipherlockConfigService>(
+        CipherlockConfigService,
+      );
       expect(configService).toBeDefined();
 
       const host = await configService.get('HOST');
