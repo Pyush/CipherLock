@@ -1,11 +1,22 @@
 #!/usr/bin/env node
 import { SecretBrokerServer } from './server';
 import { PlatformStore } from './credentials/platform-store';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as os from 'os';
 
 async function main() {
   // Filter out npm's '--' pass-through delimiter flag if present
   const args = process.argv.slice(2).filter((arg) => arg !== '--');
   const command = args[0];
+
+  const defaultRuntimeDir =
+    process.env.XDG_RUNTIME_DIR ||
+    path.join(
+      os.tmpdir(),
+      `.nest-secret-broker-${process.getuid ? process.getuid() : 1000}`,
+    );
+  const socketPath = path.join(defaultRuntimeDir, 'broker.sock');
 
   if (command === 'broker:start' || command === 'start') {
     const server = new SecretBrokerServer();
@@ -21,6 +32,21 @@ async function main() {
         process.exit(0);
       });
     });
+    return;
+  }
+
+  if (command === 'broker:stop' || command === 'stop') {
+    if (fs.existsSync(socketPath)) {
+      try {
+        fs.unlinkSync(socketPath);
+        console.log(`[OK] Secret broker daemon socket removed at ${socketPath}.`);
+      } catch (err: unknown) {
+        const error = err as Error;
+        console.error(`[ERROR] Failed to remove socket file: ${error.message}`);
+      }
+    } else {
+      console.log(`[INFO] Secret broker socket is not currently active.`);
+    }
     return;
   }
 
