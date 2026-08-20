@@ -1,0 +1,56 @@
+name: 🐛 Bug Report
+description: Create a report to help us reproduce and fix a bug in CipherLock.
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug! Please fill out the sections below to help us reproduce and resolve the issue quickly.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: Describe what happened...
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Operating System & Node Version
+      description: e.g., Linux Ubuntu 24.04 / macOS Sequoia / Windows 11, Node v24.16.0
+      placeholder: OS: Linux, Node: v24.16.0, NestJS: v11.2.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Install @iampyus/cipherlock
+        2. Run CLI command ...
+        3. See error ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error Logs or Stack Trace
+      description: Paste relevant terminal logs or stack traces here.
+      render: shell
+    validations:
+      required: false
