@@ -174,6 +174,52 @@ systemctl --user status cipherlock-broker
 
 ---
 
+## NestJS `ConfigService` Integration Patterns
+
+`@pyush/cipherlock` fully supports NestJS `@nestjs/config` across **3 flexible patterns**:
+
+### Pattern 1: Asynchronous Config Loader (`createCipherlockConfig`)
+```typescript
+import { ConfigModule } from '@nestjs/config';
+import { createCipherlockConfig } from '@pyush/cipherlock';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [createCipherlockConfig(['PORT', 'HOST', 'DATABASE_PASSWORD'])],
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+### Pattern 2: Custom `CipherlockConfigService` Injection
+```typescript
+import { CipherlockConfigService, SecretsModule } from '@pyush/cipherlock';
+
+@Injectable()
+export class DatabaseService {
+  constructor(private readonly configService: CipherlockConfigService) {}
+
+  async connect() {
+    const dbPassword = await this.configService.get('DATABASE_PASSWORD');
+  }
+}
+```
+
+### Pattern 3: 1-Line `CipherlockConfigModule` Dynamic Module
+```typescript
+import { CipherlockConfigModule } from '@pyush/cipherlock';
+
+@Module({
+  imports: [CipherlockConfigModule.forRoot({ isGlobal: true })],
+})
+export class AppModule {}
+```
+
+---
+
 ## License
 
 [MIT License](https://opensource.org/licenses/MIT) © 2026 CipherLock Contributors

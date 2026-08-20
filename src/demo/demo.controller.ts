@@ -198,4 +198,31 @@ export class DemoController {
       executablePath: identity.exePath || process.execPath,
     };
   }
+
+  /**
+   * Demo 6: ConfigService Integration Demo
+   * GET /demo/config-service
+   */
+  @Get('config-service')
+  async getConfigServiceDemo(): Promise<{
+    status: string;
+    retrievedKeys: {
+      port: number;
+      host: string;
+      passwordConfigured: boolean;
+    };
+  }> {
+    const portRaw = await this.secretsService.get('PORT');
+    const hostRaw = await this.secretsService.get('HOST');
+    const dbPassword = await this.secretsService.get('DATABASE_PASSWORD');
+
+    return {
+      status: 'success',
+      retrievedKeys: {
+        port: portRaw ? Number.parseInt(portRaw, 10) : 3000,
+        host: hostRaw || 'localhost',
+        passwordConfigured: Boolean(dbPassword && dbPassword.length > 0),
+      },
+    };
+  }
 }

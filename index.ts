@@ -4,6 +4,10 @@ export * from './src/secrets/secrets.module';
 export * from './src/secrets/providers/broker-secret.provider';
 export * from './src/secrets/providers/cloud-secret.provider';
 
+export * from './src/secrets/config/cipherlock-config.loader';
+export * from './src/secrets/config/cipherlock-config.service';
+export * from './src/secrets/config/cipherlock-config.module';
+
 export * from './broker/src/protocol';
 export * from './broker/src/policy';
 export * from './broker/src/server';
