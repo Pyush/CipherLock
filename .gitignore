@@ -1,0 +1,28 @@
+# Dependencies & Build Outputs
+node_modules/
+dist/
+coverage/
+*.tgz
+*.tar.gz
+
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.sock
+vault.enc
+.master.key
+hsm_vault.enc
+hsm_master.sealed
+dpapi_vault.dat
+dpapi_user.key
+.secret-broker*
+
+# IDE & OS Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.tsbuildinfo
