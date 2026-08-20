@@ -14,7 +14,7 @@ export class CipherlockConfigService {
    */
   async get<T = string>(key: string, defaultValue?: T): Promise<T | undefined> {
     const val = await this.secretsService.get(key);
-    if (val === null || val === undefined) {
+    if (!val || val.length === 0) {
       return defaultValue;
     }
 

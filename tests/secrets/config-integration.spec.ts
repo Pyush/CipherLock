@@ -12,8 +12,8 @@ class MockSecretProvider implements SecretProvider {
     ['DB_CONFIG', '{"host":"localhost","port":5432}'],
   ]);
 
-  async get(key: string): Promise<string | null> {
-    return this.data.get(key) ?? null;
+  async get(name: string): Promise<string> {
+    return this.data.get(name) ?? '';
   }
   async set(key: string, value: string): Promise<void> {
     this.data.set(key, value);
