@@ -1,13 +1,13 @@
 {
   "name": "@iampyus/cipherlock",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Secure local secret-management architecture for NestJS apps with Unix Sockets, Windows Named Pipes, and TPM 2.0 / Apple Secure Enclave binding.",
   "author": "CipherLock Team",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "nest-aegis": "dist/broker/src/cli.js"
+    "cipherlock": "dist/broker/src/cli.js"
   },
   "files": [
     "dist",
@@ -15,6 +15,7 @@
     "README.md"
   ],
   "scripts": {
+    "prepack": "cp README_NPM.md README.md",
     "build": "tsc",
     "pack": "npm run build && npm pack",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
