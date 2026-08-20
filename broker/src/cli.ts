@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { SecretBrokerServer } from './server';
 import { PlatformStore } from './credentials/platform-store';
 
