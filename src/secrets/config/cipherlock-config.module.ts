@@ -12,7 +12,9 @@ export interface CipherlockConfigOptions {
  */
 @Module({})
 export class CipherlockConfigModule {
-  static forRoot(options: CipherlockConfigOptions = { isGlobal: true }): DynamicModule {
+  static forRoot(
+    options: CipherlockConfigOptions = { isGlobal: true },
+  ): DynamicModule {
     return {
       module: CipherlockConfigModule,
       global: options.isGlobal ?? true,

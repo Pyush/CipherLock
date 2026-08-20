@@ -11,7 +11,13 @@ import { SecretProvider } from '../secret-provider';
  * @param provider Optional custom SecretProvider instance. Defaults to BrokerSecretProvider.
  */
 export function createCipherlockConfig(
-  keys: string[] = ['PORT', 'HOST', 'DATABASE_PASSWORD', 'DATABASE_URL', 'JWT_SECRET'],
+  keys: string[] = [
+    'PORT',
+    'HOST',
+    'DATABASE_PASSWORD',
+    'DATABASE_URL',
+    'JWT_SECRET',
+  ],
   provider: SecretProvider = new BrokerSecretProvider(),
 ) {
   return async (): Promise<Record<string, unknown>> => {

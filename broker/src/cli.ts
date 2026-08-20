@@ -39,7 +39,9 @@ async function main() {
     if (fs.existsSync(socketPath)) {
       try {
         fs.unlinkSync(socketPath);
-        console.log(`[OK] Secret broker daemon socket removed at ${socketPath}.`);
+        console.log(
+          `[OK] Secret broker daemon socket removed at ${socketPath}.`,
+        );
       } catch (err: unknown) {
         const error = err as Error;
         console.error(`[ERROR] Failed to remove socket file: ${error.message}`);
