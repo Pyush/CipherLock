@@ -1,11 +1,11 @@
-# @iampyus/cipherlock
+# @pyush/cipherlock
 
 🔒 **Secure Local Secret-Management Architecture for NestJS**
 
-`@iampyus/cipherlock` is an enterprise-grade secret management library for NestJS applications. It completely eliminates sensitive plaintext `.env` files and `process.env` leaks by serving secrets on-demand over OS-authenticated local IPC channels (Unix Domain Sockets & Windows Named Pipes) with hardware-backed encryption (TPM 2.0 & Apple Secure Enclave).
+`@pyush/cipherlock` is an enterprise-grade secret management library for NestJS applications. It completely eliminates sensitive plaintext `.env` files and `process.env` leaks by serving secrets on-demand over OS-authenticated local IPC channels (Unix Domain Sockets & Windows Named Pipes) with hardware-backed encryption (TPM 2.0 & Apple Secure Enclave).
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![npm version](https://img.shields.io/npm/v/@iampyus/cipherlock.svg)](https://www.npmjs.com/package/@iampyus/cipherlock)
+[![npm version](https://img.shields.io/npm/v/@pyush/cipherlock.svg)](https://www.npmjs.com/package/@pyush/cipherlock)
 
 ---
 
@@ -23,7 +23,7 @@
 ## Installation
 
 ```bash
-npm install @iampyus/cipherlock
+npm install @pyush/cipherlock
 ```
 
 ---
@@ -32,18 +32,18 @@ npm install @iampyus/cipherlock
 
 ### 1. Store a Secret in Local Credential Store
 ```bash
-npx @iampyus/cipherlock secrets:set -- DATABASE_PASSWORD "my-super-secret-password"
+npx @pyush/cipherlock secrets:set -- DATABASE_PASSWORD "my-super-secret-password"
 ```
 
 ### 2. Start Local Secret Broker Daemon
 ```bash
-npx @iampyus/cipherlock broker:start
+npx @pyush/cipherlock broker:start
 ```
 
 ### 3. Register Module in NestJS (`app.module.ts`)
 ```typescript
 import { Module } from '@nestjs/common';
-import { SecretsModule } from '@iampyus/cipherlock';
+import { SecretsModule } from '@pyush/cipherlock';
 
 @Module({
   imports: [SecretsModule],
@@ -54,7 +54,7 @@ export class AppModule {}
 ### 4. Consume Secrets in Services / Controllers
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { SecretsService } from '@iampyus/cipherlock';
+import { SecretsService } from '@pyush/cipherlock';
 
 @Injectable()
 export class DatabaseService {
@@ -73,7 +73,7 @@ export class DatabaseService {
 ## Storing Complex JSON Payloads
 
 ```bash
-npx @iampyus/cipherlock secrets:set -- DB_CONFIG '{"host":"localhost","port":5432,"user":"admin"}'
+npx @pyush/cipherlock secrets:set -- DB_CONFIG '{"host":"localhost","port":5432,"user":"admin"}'
 ```
 
 ```typescript
