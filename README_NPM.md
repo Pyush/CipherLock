@@ -70,15 +70,30 @@ export class DatabaseService {
 
 ---
 
-## Storing Complex JSON Payloads
+## CLI Management Tool
+
+The package includes the `cipherlock` CLI binary executable for managing credentials and starting the broker daemon:
 
 ```bash
-npx @pyush/cipherlock secrets:set -- DB_CONFIG '{"host":"localhost","port":5432,"user":"admin"}'
-```
+# 1. Set a secret in the encrypted credential store
+npx @pyush/cipherlock secrets:set -- DATABASE_PASSWORD "super-secret-password"
+# Output: [SUCCESS] Secret DATABASE_PASSWORD updated in store.
 
-```typescript
-const configJson = await this.secretsService.get('DB_CONFIG');
-const config = JSON.parse(configJson);
+# 2. Retrieve a secret via CLI
+npx @pyush/cipherlock secrets:get -- DATABASE_PASSWORD
+# Output: [SUCCESS] DATABASE_PASSWORD = super-secret-password
+
+# 3. Store a complex JSON payload
+npx @pyush/cipherlock secrets:set -- DB_CONFIG '{"host":"localhost","port":5432,"user":"admin"}'
+# Output: [SUCCESS] Secret DB_CONFIG updated in store.
+
+# 4. Delete a secret from the credential store
+npx @pyush/cipherlock secrets:delete -- DATABASE_PASSWORD
+# Output: [SUCCESS] Secret DATABASE_PASSWORD deleted from store.
+
+# 5. Launch the Secret Broker Daemon
+npx @pyush/cipherlock broker:start
+# Output: [BROKER] Secret Broker listening on /tmp/cipherlock/broker.sock
 ```
 
 ---
