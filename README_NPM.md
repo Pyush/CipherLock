@@ -51,21 +51,30 @@ import { SecretsModule } from '@pyush/cipherlock';
 export class AppModule {}
 ```
 
-### 4. Consume Secrets in Services / Controllers
+### 4. Consume Secrets in Application Entrypoint (`src/main.ts`)
 ```typescript
-import { Injectable } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
 import { SecretsService } from '@pyush/cipherlock';
 
-@Injectable()
-export class DatabaseService {
-  constructor(private readonly secretsService: SecretsService) {}
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
 
-  async connect() {
-    // Secret retrieved securely over local IPC socket; never in process.env
-    const dbPassword = await this.secretsService.get('DATABASE_PASSWORD');
-    // ... establish DB connection
-  }
+  // 1. Resolve SecretsService instance from NestJS Application Context
+  const secretsService = app.get(SecretsService);
+
+  // 2. Retrieve PORT and HOST directly over local IPC without try/catch
+  const port = Number.parseInt(
+    (await secretsService.get('PORT')) ?? '3000',
+    10,
+  );
+  const host = (await secretsService.get('HOST')) ?? 'localhost';
+
+  // 3. Start application server without process.env leaks
+  await app.listen(port, host);
+  console.log(`[APP] Application listening on http://${host}:${port}`);
 }
+void bootstrap();
 ```
 
 ---
@@ -102,7 +111,30 @@ npx @pyush/cipherlock secrets:delete-many PORT HOST DB_NAME
 # 7. Launch the Secret Broker Daemon
 npx @pyush/cipherlock broker:start
 # Output: [BROKER] Secret Broker listening on /tmp/cipherlock/broker.sock
+
+# 8. Stop the Secret Broker Daemon
+npx @pyush/cipherlock broker:stop
+# Output: [OK] Secret broker daemon socket removed.
 ```
+
+---
+
+## Concurrent Development Workflow (`package.json`)
+
+To automatically launch the secret broker daemon alongside NestJS in watch mode and shut down both services cleanly when pressing `Ctrl+C`, install `concurrently` and add the `--kill-others` flag:
+
+```bash
+npm install --save-dev concurrently
+```
+
+Update your `package.json`:
+```json
+"scripts": {
+  "start:dev": "concurrently --kill-others \"npx @pyush/cipherlock broker:start\" \"nest start --watch\""
+}
+```
+
+Now running `npm run start:dev` starts both the Secret Broker Daemon and NestJS. When you terminate with `Ctrl+C`, `concurrently` terminates both child processes and unlinks the Unix socket.
 
 ---
 
