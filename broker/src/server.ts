@@ -5,9 +5,9 @@ import { UnixSocketServer } from './ipc/unix-socket-server';
 export class SecretBrokerServer {
   private server: UnixSocketServer;
 
-  constructor(socketPath?: string) {
+  constructor(socketPath?: string, policyEngine?: PolicyEngine) {
     const store = new PlatformStore();
-    const policy = new PolicyEngine();
+    const policy = policyEngine || new PolicyEngine();
     this.server = new UnixSocketServer({
       socketPath,
       credentialStore: store,
