@@ -285,3 +285,34 @@ curl "http://localhost:3000/demo/cloud-provider?type=vault"
 curl http://localhost:3000/demo/hardware-status
 curl http://localhost:3000/demo/peer-verification
 ```
+
+### Automated Background Daemon Setup (`systemd`)
+
+For automated background execution without manual terminal invocations, create a user systemd unit at `~/.config/systemd/user/cipherlock-broker.service`:
+
+```ini
+[Unit]
+Description=CipherLock Secret Broker Daemon
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/npx @pyush/cipherlock broker:start
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target
+```
+
+Enable and start the service:
+```bash
+systemctl --user daemon-reload
+systemctl --user enable cipherlock-broker --now
+```
+
+Monitor status:
+```bash
+systemctl --user status cipherlock-broker
+```

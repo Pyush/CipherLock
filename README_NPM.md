@@ -106,6 +106,42 @@ npx @pyush/cipherlock broker:start
 
 ---
 
+## Automated Background Service Setup (systemd)
+
+Instead of starting the broker manually in a terminal, you can run it as an automatic background service under your Linux OS user.
+
+Create `~/.config/systemd/user/cipherlock-broker.service`:
+
+```ini
+[Unit]
+Description=CipherLock Secret Broker Daemon
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/npx @pyush/cipherlock broker:start
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target
+```
+
+Enable and start the background service:
+
+```bash
+systemctl --user daemon-reload
+systemctl --user enable cipherlock-broker --now
+```
+
+Check service status anytime:
+```bash
+systemctl --user status cipherlock-broker
+```
+
+---
+
 ## License
 
 [MIT License](https://opensource.org/licenses/MIT) © 2026 CipherLock Contributors
