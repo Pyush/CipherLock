@@ -1,0 +1,19 @@
+name: 💬 Question & Support
+description: Ask a question about setting up or using CipherLock.
+title: "[QUESTION] "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a question about configuring CipherLock, integrating it with NestJS, or hardware binding?
+        Please check if your question can be asked in [GitHub Discussions](https://github.com/Pyush/CipherLock/discussions)!
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your Question
+      description: Describe what you need help with.
+      placeholder: How do I configure...
+    validations:
+      required: true
