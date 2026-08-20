@@ -20,6 +20,14 @@ dpapi_vault.dat
 dpapi_user.key
 .secret-broker*
 
+# Unignore source directories that match global gitignore patterns
+!broker/src/credentials/
+!broker/src/credentials/**
+!src/secrets/
+!src/secrets/**
+!tests/secrets/
+!tests/secrets/**
+
 # IDE & OS Files
 .DS_Store
 Thumbs.db
