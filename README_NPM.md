@@ -220,6 +220,70 @@ export class AppModule {}
 
 ---
 
+## Dynamic PolicyEngine & Custom Security ACLs
+
+`@pyush/cipherlock` includes a built-in `PolicyEngine` that controls process-level access permissions to secrets based on OS kernel peer authentication (`SO_PEERCRED`).
+
+### 1. Registering Custom Roles and Permissions Dynamically
+
+```typescript
+import { PolicyEngine, ClientIdentity } from '@pyush/cipherlock';
+
+// Instantiate PolicyEngine (set allowAllForOwner to false to enforce strict role rules)
+const policyEngine = new PolicyEngine({}, false);
+
+// 1. Register role-based whitelists
+policyEngine.registerPolicy('payment-service', ['STRIPE_KEY', 'DATABASE_URL']);
+policyEngine.registerPolicy('user-service', ['PORT', 'HOST', 'JWT_SECRET']);
+
+// 2. Register wildcard '*' administrative policy
+policyEngine.registerPolicy('super-admin', ['*']);
+
+// 3. Evaluate identity permissions
+const caller: ClientIdentity = { uid: 1001, gid: 1001, role: 'payment-service' };
+
+console.log(policyEngine.isAllowed(caller, 'STRIPE_KEY'));   // true
+console.log(policyEngine.isAllowed(caller, 'JWT_SECRET'));   // false
+```
+
+### 2. Passing Custom PolicyEngine to `SecretBrokerServer`
+
+If you are running a custom Secret Broker Daemon inside your application or infrastructure:
+
+```typescript
+import { SecretBrokerServer, PolicyEngine } from '@pyush/cipherlock';
+
+const customPolicy = new PolicyEngine();
+customPolicy.registerPolicy('analytics-app', ['CLICKHOUSE_URL', 'REDIS_HOST']);
+
+// Pass custom PolicyEngine to SecretBrokerServer
+const server = new SecretBrokerServer('/tmp/custom-broker.sock', customPolicy);
+await server.start();
+```
+
+### 3. Extending PolicyEngine for Custom Application Logic
+
+You can extend `PolicyEngine` to pull permission rules from a database, remote RBAC server, or custom logic:
+
+```typescript
+import { PolicyEngine, ClientIdentity } from '@pyush/cipherlock';
+
+export class DatabaseBackedPolicyEngine extends PolicyEngine {
+  private allowedSecrets = new Set(['PORT', 'HOST', 'CUSTOM_APP_SECRET']);
+
+  public override isAllowed(identity: ClientIdentity, secretName: string): boolean {
+    // Custom check: Root user UID 0 has full access
+    if (identity.uid === 0) {
+      return true;
+    }
+    // Whitelist check
+    return this.allowedSecrets.has(secretName);
+  }
+}
+```
+
+---
+
 ## License
 
 [MIT License](https://opensource.org/licenses/MIT) © 2026 CipherLock Contributors
