@@ -14,6 +14,9 @@
     "LICENSE",
     "README.md"
   ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "scripts": {
     "prepack": "cp README_NPM.md README.md",
     "build": "tsc",
