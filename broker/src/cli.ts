@@ -3,7 +3,8 @@ import { SecretBrokerServer } from './server';
 import { PlatformStore } from './credentials/platform-store';
 
 async function main() {
-  const args = process.argv.slice(2);
+  // Filter out npm's '--' pass-through delimiter flag if present
+  const args = process.argv.slice(2).filter((arg) => arg !== '--');
   const command = args[0];
 
   if (command === 'broker:start' || command === 'start') {
@@ -27,7 +28,7 @@ async function main() {
     const key = args[1];
     const val = args[2];
     if (!key || !val) {
-      console.error('Usage: npm run secrets:set -- <KEY> <VALUE>');
+      console.error('Usage: npx @pyush/cipherlock secrets:set PORT "3000"');
       process.exit(1);
     }
     const store = new PlatformStore();
@@ -39,18 +40,15 @@ async function main() {
   if (command === 'secrets:get') {
     const key = args[1];
     if (!key) {
-      console.error('Usage: npm run secrets:get -- <KEY>');
+      console.error('Usage: npx @pyush/cipherlock secrets:get PORT');
       process.exit(1);
     }
-    console.log(`[DEBUG] Attempting to retrieve secret '${key}'...`);
     const store = new PlatformStore();
     const val = await store.get(key);
     if (val === null) {
       console.log(`Secret '${key}' not found.`);
     } else {
-      console.log(
-        `[DEBUG] Secret '${key}' exists in store. Length: ${val.length} chars.`,
-      );
+      console.log(`[OK] ${key} = ${val}`);
     }
     return;
   }
@@ -58,7 +56,7 @@ async function main() {
   if (command === 'secrets:delete') {
     const key = args[1];
     if (!key) {
-      console.error('Usage: npm run secrets:delete -- <KEY>');
+      console.error('Usage: npx @pyush/cipherlock secrets:delete PORT');
       process.exit(1);
     }
     const store = new PlatformStore();
