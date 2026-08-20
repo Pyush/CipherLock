@@ -12,10 +12,16 @@ export interface AccessPolicy {
 export class PolicyEngine {
   private static readonly ROLE_POLICIES: Record<string, AccessPolicy> = {
     'sample-nest-app': {
-      allowedSecrets: ['DATABASE_PASSWORD', 'DB_CONFIG_JSON'],
+      allowedSecrets: ['DATABASE_PASSWORD', 'DB_CONFIG_JSON', 'PORT', 'HOST'],
     },
     'secret-admin': {
-      allowedSecrets: ['DATABASE_PASSWORD', 'JWT_SECRET', 'DB_CONFIG_JSON'],
+      allowedSecrets: [
+        'DATABASE_PASSWORD',
+        'JWT_SECRET',
+        'DB_CONFIG_JSON',
+        'PORT',
+        'HOST',
+      ],
     },
   };
 

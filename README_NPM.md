@@ -75,23 +75,31 @@ export class DatabaseService {
 The package includes the `cipherlock` CLI binary executable for managing credentials and starting the broker daemon:
 
 ```bash
-# 1. Set a secret in the encrypted credential store
+# 1. Set a single secret in the encrypted credential store
 npx @pyush/cipherlock secrets:set PORT "3000"
 # Output: [OK] Secret 'PORT' stored securely in OS credential store.
 
-# 2. Retrieve a secret via CLI
+# 2. Set multiple secrets at once (set-many)
+npx @pyush/cipherlock secrets:set-many PORT "3000" HOST "localhost" DB_NAME "prod_db"
+# Output: [OK] Stored 3 secrets (PORT, HOST, DB_NAME) securely in OS credential store.
+
+# 3. Retrieve a secret via CLI
 npx @pyush/cipherlock secrets:get PORT
 # Output: [OK] PORT = 3000
 
-# 3. Store a complex JSON payload
+# 4. Store a complex JSON payload
 npx @pyush/cipherlock secrets:set DB_CONFIG '{"host":"localhost","port":5432,"user":"admin"}'
 # Output: [OK] Secret 'DB_CONFIG' stored securely in OS credential store.
 
-# 4. Delete a secret from the credential store
+# 5. Delete a single secret from the credential store
 npx @pyush/cipherlock secrets:delete PORT
 # Output: [OK] Secret 'PORT' deleted from OS credential store.
 
-# 5. Launch the Secret Broker Daemon
+# 6. Delete multiple secrets at once (delete-many)
+npx @pyush/cipherlock secrets:delete-many PORT HOST DB_NAME
+# Output: [OK] Deleted 3 secrets (PORT, HOST, DB_NAME) from OS credential store.
+
+# 7. Launch the Secret Broker Daemon
 npx @pyush/cipherlock broker:start
 # Output: [BROKER] Secret Broker listening on /tmp/cipherlock/broker.sock
 ```

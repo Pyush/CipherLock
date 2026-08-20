@@ -123,4 +123,20 @@ export class HardwareBoundStore implements CredentialStore {
     this.memoryStore.delete(name);
     await this.saveToDisk();
   }
+
+  async setMany(entries: Record<string, string>): Promise<void> {
+    await this.loadFromDisk();
+    for (const [k, v] of Object.entries(entries)) {
+      this.memoryStore.set(k, v);
+    }
+    await this.saveToDisk();
+  }
+
+  async deleteMany(names: string[]): Promise<void> {
+    await this.loadFromDisk();
+    for (const name of names) {
+      this.memoryStore.delete(name);
+    }
+    await this.saveToDisk();
+  }
 }

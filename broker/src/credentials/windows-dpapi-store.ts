@@ -130,4 +130,20 @@ export class WindowsDpapiStore implements CredentialStore {
     this.saveToDisk();
     return Promise.resolve();
   }
+
+  setMany(entries: Record<string, string>): Promise<void> {
+    for (const [k, v] of Object.entries(entries)) {
+      this.memoryStore.set(k, v);
+    }
+    this.saveToDisk();
+    return Promise.resolve();
+  }
+
+  deleteMany(names: string[]): Promise<void> {
+    for (const name of names) {
+      this.memoryStore.delete(name);
+    }
+    this.saveToDisk();
+    return Promise.resolve();
+  }
 }

@@ -37,6 +37,26 @@ async function main() {
     return;
   }
 
+  if (command === 'secrets:set-many' || command === 'secrets:setmany') {
+    const pairs = args.slice(1);
+    if (pairs.length === 0 || pairs.length % 2 !== 0) {
+      console.error(
+        'Usage: npx @pyush/cipherlock secrets:set-many KEY1 VAL1 KEY2 VAL2 ...',
+      );
+      process.exit(1);
+    }
+    const entries: Record<string, string> = {};
+    for (let i = 0; i < pairs.length; i += 2) {
+      entries[pairs[i]] = pairs[i + 1];
+    }
+    const store = new PlatformStore();
+    await store.setMany(entries);
+    console.log(
+      `[OK] Stored ${Object.keys(entries).length} secrets (${Object.keys(entries).join(', ')}) securely in OS credential store.`,
+    );
+    return;
+  }
+
   if (command === 'secrets:get') {
     const key = args[1];
     if (!key) {
@@ -62,6 +82,22 @@ async function main() {
     const store = new PlatformStore();
     await store.delete(key);
     console.log(`[OK] Secret '${key}' deleted from OS credential store.`);
+    return;
+  }
+
+  if (command === 'secrets:delete-many' || command === 'secrets:deletemany') {
+    const keys = args.slice(1);
+    if (keys.length === 0) {
+      console.error(
+        'Usage: npx @pyush/cipherlock secrets:delete-many KEY1 KEY2 ...',
+      );
+      process.exit(1);
+    }
+    const store = new PlatformStore();
+    await store.deleteMany(keys);
+    console.log(
+      `[OK] Deleted ${keys.length} secrets (${keys.join(', ')}) from OS credential store.`,
+    );
     return;
   }
 
